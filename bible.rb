@@ -1,10 +1,10 @@
 require 'bible_gateway'
 require 'byebug'
+require 'fileutils'
 
-puts "Type in a Bible verse to get..."
+VERSIONS = BibleGateway::VERSIONS
 
 def parse_map
-
   map = File.open("data/bible_map.txt")
 
   books = map.readlines
@@ -25,31 +25,70 @@ def parse_map
   end
 end
 
-bible_map = parse_map
 
-byebug
+def lookup_chapter(chapter)
+  b = BibleGateway.new(Thread.current[:bible_version]) # defaults to :king_james_version, but can be initialized to different version
+  begin
+    response = b.lookup(chapter) # sometimes biblegateway fails
+  rescue StandardError => e
+    return ["Unable to pull chapter #{chapter}"]
+    puts "Unable to pull chapter #{chapter}"
+  end
 
-exit
+  doc = Nokogiri::HTML(response[:content])
+  # Select all paragraphs
+  paragraphs = doc.xpath("//p")
 
-verse = gets.chomp
+  text = paragraphs.map do |paragraph|
+    paragraph.content
+  end.compact
+end
 
-b = BibleGateway.new # defaults to :king_james_version, but can be initialized to different version
-response = b.lookup(verse)
+def write_chapter(chapter, verses)
+  chapter = chapter.gsub(" ", "_")
 
-doc = Nokogiri::HTML(response[:content])
-# Select all paragraphs
-paragraphs = doc.xpath("//p")
+  FileUtils.mkdir_p "output/#{Thread.current[:abbrev]}"
 
-text = paragraphs.map do |paragraph|
-  paragraph.content
-end.compact
-
-# byebug
-
-File.open(verse, "w") do |f|
-  text.each do|t|
-    f.write("#{t}\n")
+  File.open("output/#{Thread.current[:abbrev]}/#{chapter}", "w") do |f|
+    verses.each do|t|
+      f.write("#{t}\n")
+    end
   end
 end
+
+def rip_bible
+  bible_map = parse_map
+
+  version = Thread.current[:bible_version]
+  abbrev = Thread.current[:bible_abbrev]
+
+  threads = bible_map.map do |book, chapter_count|
+    Thread.new do # :awwyeah:
+      Thread.current[:bible_version] = version
+      Thread.current[:bible_abbrev] = abbrev
+
+      (1..chapter_count).each do |index|
+        chapter = "#{book} #{index}"
+
+        verses = lookup_chapter(chapter)
+        write_chapter(chapter, verses)
+        puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
+      end
+    end
+  end
+
+  # Waiting until exit
+  threads.each(&:join)
+end
+
+threads = VERSIONS.map do |version, abbrev|
+  Thread.new do
+    Thread.current[:bible_version] = version
+    Thread.current[:bible_abbrev] = abbrev
+    rip_bible # too much? maybe...
+  end
+end
+
+threads.each(&:join)
 
 puts "Fin..."
