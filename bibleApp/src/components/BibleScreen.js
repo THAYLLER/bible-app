@@ -1,6 +1,7 @@
 // Import a library to help create a component
 import React from 'react';
 import { Text, View, Image } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const BibleScreen = () => {
 	const { textStyle, viewStyle } = styles;
@@ -16,7 +17,7 @@ BibleScreen.navigationOptions = {
   tabBar: {
     label: 'Bible',
     icon: () => (
-      <Image source={require('../images/shoeprints.png')} />
+      <Ionicons name="ios-bookmarks-outline" size={35} />
     ),
   },
 };

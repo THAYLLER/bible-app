@@ -1,6 +1,7 @@
 // Import a library to help create a component
 import React from 'react';
 import { Text, View, Image } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const HomeScreen = () => {
 	const { textStyle, viewStyle } = styles;
@@ -16,7 +17,7 @@ HomeScreen.navigationOptions = {
   tabBar: {
     label: 'Home',
     icon: () => (
-      <Image source={require('../images/shoeprints.png')} />
+      <Ionicons name="ios-home-outline" size={35} />
     ),
   },
 };
