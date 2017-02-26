@@ -11,8 +11,8 @@ class BibleChapter {
   fetchContents(callback) {
     // if we have contents, lets return those. 
     // we don't want to read twice from the files
-    if(!!this.contents) {
-      return this.contents;
+    if(!!this.contents || this.verses) {
+      return;
     }
 
     var self = this; // little hack to keep scope
@@ -21,6 +21,8 @@ class BibleChapter {
       .then((contents) => {
         self.contents = contents;
 
+        
+        
         // if a callback exists, lets call it
         if(!!callback) {
           callback(self);

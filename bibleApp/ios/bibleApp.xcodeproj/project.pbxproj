@@ -76,6 +76,7 @@
 		DF81AFCE6FD24F3B8B940B6C /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44B79461F3A8472C89921D4F /* Zocial.ttf */; };
 		E0A6FDA6A8D44A6F8BCFD65A /* SanFrancisco.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E5F66DE6BBA4A928441226C /* SanFrancisco.ttf */; };
 		E20653E6B2614AE0BEF797B6 /* Times New Roman.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7300547870C14F5297E380FC /* Times New Roman.ttf */; };
+		E21CB7201E638FA3000741AA /* bibles in Resources */ = {isa = PBXBuildFile; fileRef = E21CB71F1E638FA3000741AA /* bibles */; };
 		E890695174204023B59DB30E /* Rubik-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 292A79B8F4C84FCD8C1D2A31 /* Rubik-LightItalic.ttf */; };
 		E8CF39963F0E4087AE848CC5 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7821109A416746898466547C /* rubicon-icon-font.ttf */; };
 		EA3AD2D56A294B428124392D /* Comic Sans MS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 113C73F9A25A47D9B828AE9A /* Comic Sans MS.ttf */; };
@@ -361,6 +362,7 @@
 		CE4CB62FA2F347879A926659 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		D89AC77208F741ACA98DA183 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		E0D9CFA6620D4927BE31A22E /* Rubik-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-BlackItalic.ttf"; path = "../node_modules/native-base/Fonts/Rubik-BlackItalic.ttf"; sourceTree = "<group>"; };
+		E21CB71F1E638FA3000741AA /* bibles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bibles; path = ../../scripts/bibles; sourceTree = "<group>"; };
 		ECBA9CA9321449DE8E2B3168 /* Rubik-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Light.ttf"; path = "../node_modules/native-base/Fonts/Rubik-Light.ttf"; sourceTree = "<group>"; };
 		FD21DEDAB5AB4606BFA81EC3 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -626,6 +628,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				E21CB71F1E638FA3000741AA /* bibles */,
 				13B07FAE1A68108700A75B9A /* bibleApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* bibleAppTests */,
@@ -1062,6 +1065,7 @@
 				E8CF39963F0E4087AE848CC5 /* rubicon-icon-font.ttf in Resources */,
 				B0192F51F96E4AAAB91074D1 /* Rubik-Black.ttf in Resources */,
 				523C25D2A77442FDB46D6870 /* Rubik-BlackItalic.ttf in Resources */,
+				E21CB7201E638FA3000741AA /* bibles in Resources */,
 				654AEBA2333F4A36AFA9D87E /* Rubik-Bold.ttf in Resources */,
 				07B64C3ACAC147D3975E183D /* Rubik-BoldItalic.ttf in Resources */,
 				8896FC7E861546DD8203931F /* Rubik-Italic.ttf in Resources */,

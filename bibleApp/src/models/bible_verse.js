@@ -1,6 +1,6 @@
 class BibleVerse {
   constructor(index, contents) {
-
+    
   }
 }
 

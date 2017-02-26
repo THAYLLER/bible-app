@@ -47,9 +47,9 @@ end
 def write_chapter(chapter, verses)
   chapter = chapter.gsub(" ", "_")
 
-  FileUtils.mkdir_p "output/#{Thread.current[:bible_abbrev]}"
+  FileUtils.mkdir_p "bibles/#{Thread.current[:bible_abbrev]}"
 
-  File.open("output/#{Thread.current[:bible_abbrev]}/#{chapter}", "w") do |f|
+  File.open("bibles/#{Thread.current[:bible_abbrev]}/#{chapter}", "w") do |f|
     verses.each do|t|
       f.write("#{t}\n")
     end

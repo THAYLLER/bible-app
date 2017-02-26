@@ -3,7 +3,8 @@ import {
   AppRegistry, 
   Text, 
   View,
-  StyleSheet 
+  StyleSheet,
+  ScrollView
 } from 'react-native';
 
 import BibleChapter from '../models/bible_chapter';
@@ -48,13 +49,26 @@ class Chapter extends Component {
         <Text style={styles.chapter}>
           {this.state.model.getBuiltChapterString()}
         </Text>
-        <Text>
-          {this.state.model.contents}
-        </Text>
+        <ScrollView>
+          <Text>
+            {this.state.model.contents}
+          </Text>
+        </ScrollView>
       </View>
     );
   }
 }
+
+// temp for now
+import Ionicons from 'react-native-vector-icons/Ionicons'
+Chapter.navigationOptions = {
+  tabBar: {
+    label: 'Test Chapter',
+    icon: () => (
+      <Ionicons name="ios-bookmarks-outline" size={35} />
+    ),
+  },
+};
 
 Chapter.defaultProps = {
   book: book,
