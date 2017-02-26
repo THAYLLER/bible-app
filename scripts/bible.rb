@@ -1,6 +1,7 @@
 require 'bible_gateway'
 require 'byebug'
 require 'fileutils'
+require_relative 'failed_chapters'
 
 VERSIONS = BibleGateway::VERSIONS
 
@@ -69,10 +70,12 @@ def rip_bible
 
       (1..chapter_count).each do |index|
         chapter = "#{book} #{index}"
-
-        verses = lookup_chapter(chapter)
-        write_chapter(chapter, verses)
-        puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
+        file_name = chapter.gsub(" ", "_")
+        if @failed_files[abbrev].include?(file_name) || !File.exists?("bibles/#{abbrev}/#{file_name}")
+          verses = lookup_chapter(chapter)
+          write_chapter(chapter, verses)
+          puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
+        end
       end
     end
   end
@@ -80,6 +83,12 @@ def rip_bible
   # Waiting until exit
   threads.each(&:join)
 end
+
+@failed_files = file_failures_by_version
+
+total_file_count = @failed_files.inject(0) { |acc, (k, v)| acc += v.count; acc }
+  
+puts "I am going to pull approximately #{total_file_count} bible chapters"
 
 processes = VERSIONS.map do |version, abbrev|
   Process.fork do
