@@ -88,7 +88,7 @@ end
 
 total_file_count = @failed_files.inject(0) { |acc, (k, v)| acc += v.count; acc }
   
-puts "I am going to pull approximately #{total_file_count} bible chapters"
+puts "I am going to re-pull approximately #{total_file_count} bible chapters"
 
 processes = VERSIONS.map do |version, abbrev|
   Process.fork do
