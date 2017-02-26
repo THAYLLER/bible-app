@@ -31,8 +31,8 @@ def lookup_chapter(chapter)
   begin
     response = b.lookup(chapter) # sometimes biblegateway fails
   rescue StandardError => e
-    return ["Unable to pull chapter #{chapter}"]
     puts "Unable to pull chapter #{chapter}"
+    return ["Unable to pull chapter #{chapter}"]
   end
 
   doc = Nokogiri::HTML(response[:content])
@@ -47,9 +47,9 @@ end
 def write_chapter(chapter, verses)
   chapter = chapter.gsub(" ", "_")
 
-  FileUtils.mkdir_p "output/#{Thread.current[:abbrev]}"
+  FileUtils.mkdir_p "output/#{Thread.current[:bible_abbrev]}"
 
-  File.open("output/#{Thread.current[:abbrev]}/#{chapter}", "w") do |f|
+  File.open("output/#{Thread.current[:bible_abbrev]}/#{chapter}", "w") do |f|
     verses.each do|t|
       f.write("#{t}\n")
     end
@@ -81,14 +81,14 @@ def rip_bible
   threads.each(&:join)
 end
 
-threads = VERSIONS.map do |version, abbrev|
-  Thread.new do
+processes = VERSIONS.map do |version, abbrev|
+  Process.fork do
     Thread.current[:bible_version] = version
     Thread.current[:bible_abbrev] = abbrev
     rip_bible # too much? maybe...
   end
 end
 
-threads.each(&:join)
-
+Process.waitall
+# need to figure out how many things failed when being pulled down
 puts "Fin..."
