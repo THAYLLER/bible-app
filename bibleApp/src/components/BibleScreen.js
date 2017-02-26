@@ -1,6 +1,6 @@
 // Import a library to help create a component
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Image } from 'react-native';
 
 const BibleScreen = () => {
 	const { textStyle, viewStyle } = styles;
@@ -9,6 +9,16 @@ const BibleScreen = () => {
     	<Text style={textStyle}>Read The Bible Here</Text>
     </View>
   );
+};
+
+BibleScreen.navigationOptions = {
+  // title: 'Tab2'
+  tabBar: {
+    label: 'Bible',
+    icon: () => (
+      <Image source={require('../images/shoeprints.png')} />
+    ),
+  },
 };
 
 const styles = {

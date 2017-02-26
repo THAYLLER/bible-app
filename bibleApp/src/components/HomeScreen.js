@@ -1,6 +1,6 @@
 // Import a library to help create a component
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Image } from 'react-native';
 
 const HomeScreen = () => {
 	const { textStyle, viewStyle } = styles;
@@ -9,6 +9,16 @@ const HomeScreen = () => {
     	<Text style={textStyle}>Home</Text>
     </View>
   );
+};
+
+HomeScreen.navigationOptions = {
+  // title: 'Tab1'
+  tabBar: {
+    label: 'Home',
+    icon: () => (
+      <Image source={require('../images/shoeprints.png')} />
+    ),
+  },
 };
 
 const styles = {
