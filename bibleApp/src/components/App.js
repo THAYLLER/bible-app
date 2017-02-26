@@ -3,6 +3,7 @@ import React from 'react';
 import { TabNavigator } from 'react-navigation';
 import HomeScreen from './HomeScreen';
 import BibleScreen from './BibleScreen';
+import Chapter from './chapter'
 
 const App = TabNavigator({
   Tab1: {
@@ -11,6 +12,9 @@ const App = TabNavigator({
   Tab2: {
     screen: BibleScreen,
   },
+  Chapter: {
+    screen: Chapter
+  }
 }, {
   tabBarOptions:   {
     initialRouteName: 'Tab1',
