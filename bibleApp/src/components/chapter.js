@@ -6,6 +6,8 @@ import {
   StyleSheet 
 } from 'react-native';
 
+import BibleChapter from '../models/bible_chapter';
+
 let bibleVersion = "ESV";
 let book = "Romans";
 let chapter = 1;
@@ -17,7 +19,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 10
   }
 });
 
@@ -25,37 +28,28 @@ class Chapter extends Component {
   constructor(props) {
     super(props)
 
-    const bibleText = require(getFilePath());
+    let chapter = new BibleChapter(this.props.book, this.props.chapter, this.props.bibleVersion)
 
-    // should I do it this way? I don't like storing this into state... but that's
-    // the only way to not read it every time we render
     this.state = {
-      content: bibleText
-    }
-  }
+      model: chapter
+    };
 
-  getFilePath() {
-    let fileName = getBuiltChapterString().replace(" ", "_");
 
-    let path = `bibles/${this.props.bibleVersion}/${fileName}`;
-
-    console.log(`Pulling from file at path ${path}`);
-
-    return path;
-  }
-
-  getBuiltChapterString() {
-    return `${this.props.book} ${chapter}`;
+    var self = this;
+    // this feels a bit hacky. but lets run with it for now.
+    chapter.fetchContents((model) => {
+      self.setState(model: model);
+    });
   }
 
   render() {
     return(
       <View style={styles.container}>
         <Text style={styles.chapter}>
-          {this.getBuiltChapterString()}
+          {this.state.model.getBuiltChapterString()}
         </Text>
         <Text>
-          {this.state.content}
+          {this.state.model.contents}
         </Text>
       </View>
     );
@@ -66,10 +60,12 @@ Chapter.defaultProps = {
   book: book,
   chapter: chapter,
   bibleVersion: bibleVersion
-}
+};
 
 Chapter.propTypes = {
   book: React.PropTypes.string.isRequired,
   chapter: React.PropTypes.number.isRequired,
   bibleVersion: React.PropTypes.string.isRequired
-}
+};
+
+export default Chapter;
