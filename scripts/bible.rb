@@ -37,7 +37,7 @@ def lookup_chapter(chapter)
   end
 
   doc = Nokogiri::HTML(response[:content])
-  # Select all paragraphs
+  # Select all paragraphs`
   paragraphs = doc.xpath("//p")
   chapter_string = []
 

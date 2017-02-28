@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { 
-  AppRegistry, 
   Text, 
   View,
   StyleSheet,
   ScrollView
 } from 'react-native';
 
+// Components
+import Verse from './Verse';
+
+// Models
 import BibleChapter from '../models/bible_chapter';
 
 let bibleVersion = "ESV";
@@ -35,7 +38,6 @@ class Chapter extends Component {
       model: chapter
     };
 
-
     var self = this;
     // this feels a bit hacky. but lets run with it for now.
     chapter.fetchContents((model) => {
@@ -43,16 +45,29 @@ class Chapter extends Component {
     });
   }
 
+  getChapterVerses() {
+    return this.state.model.verses;
+  }
+
   render() {
+    var verses = [];
+    if(!!this.getChapterVerses()) {
+      verses = this.getChapterVerses().map( (verse) => {
+        return <Verse verse={verse} key={verse.index}></Verse>
+      });
+
+      console.log(verses)
+    }
+
+    console.log(verses);
+
     return(
       <View style={styles.container}>
         <Text style={styles.chapter}>
           {this.state.model.getBuiltChapterString()}
         </Text>
         <ScrollView>
-          <Text>
-            {this.state.model.contents}
-          </Text>
+          {verses}
         </ScrollView>
       </View>
     );
