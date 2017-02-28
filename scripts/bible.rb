@@ -3,7 +3,7 @@ require 'byebug'
 require 'fileutils'
 require_relative 'failed_chapters'
 
-VERSIONS = BibleGateway::VERSIONS
+VERSIONS = {:english_standard_version => "ESV"} #BibleGateway::VERSIONS
 
 def parse_map
   map = File.open("data/bible_map.txt")
@@ -33,16 +33,27 @@ def lookup_chapter(chapter)
     response = b.lookup(chapter) # sometimes biblegateway fails
   rescue StandardError => e
     puts "Unable to pull chapter #{chapter}"
-    return ["Unable to pull chapter #{chapter}"]
+    return e.message
   end
 
   doc = Nokogiri::HTML(response[:content])
   # Select all paragraphs
   paragraphs = doc.xpath("//p")
+  chapter_string = []
 
-  text = paragraphs.map do |paragraph|
-    paragraph.content
-  end.compact
+  (1...paragraphs.children.count).each do |index|
+    paragraph = paragraphs.children[index].content
+
+    if paragraph.length > 5 # assuming we don't have anything more than triple digit 
+      chapter_string << paragraphs.children[index].content
+    end
+  end
+
+  chapter_string
+end
+
+def fix_chapter(verses)
+  fixed_array = []
 end
 
 def write_chapter(chapter, verses)
@@ -51,6 +62,11 @@ def write_chapter(chapter, verses)
   FileUtils.mkdir_p "bibles/#{Thread.current[:bible_abbrev]}"
 
   File.open("bibles/#{Thread.current[:bible_abbrev]}/#{chapter}", "w") do |f|
+    if !verses
+      puts "Something is trying to write #{chapter}"
+      return
+    end
+
     verses.each do|t|
       f.write("#{t}\n")
     end
@@ -73,6 +89,7 @@ def rip_bible
         file_name = chapter.gsub(" ", "_")
         if @failed_files[abbrev].include?(file_name) || !File.exists?("bibles/#{abbrev}/#{file_name}")
           verses = lookup_chapter(chapter)
+          # verses = fix_chapter(verses)
           write_chapter(chapter, verses)
           puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
         end
