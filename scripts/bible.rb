@@ -52,10 +52,6 @@ def lookup_chapter(chapter)
   chapter_string
 end
 
-def fix_chapter(verses)
-  fixed_array = []
-end
-
 def write_chapter(chapter, verses)
   chapter = chapter.gsub(" ", "_")
 
@@ -89,7 +85,6 @@ def rip_bible
         file_name = chapter.gsub(" ", "_")
         if @failed_files[abbrev].include?(file_name) || !File.exists?("bibles/#{abbrev}/#{file_name}")
           verses = lookup_chapter(chapter)
-          # verses = fix_chapter(verses)
           write_chapter(chapter, verses)
           puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
         end
