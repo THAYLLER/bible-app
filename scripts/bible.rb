@@ -17,12 +17,12 @@ def parse_map
     # hack for books with numbers in them
     book_name = chapters[0]
     chapter_count = chapters.count - 1
-    unless book[0].to_i == 0
-      book_name = "#{chapters[0]} #{chapters[1]}"
-      chapter_count -= 1
-    end
+    # unless book[0].to_i == 0
+    #   book_name = "#{chapters[0]} #{chapters[1]}"
+    #   chapter_count -= 1
+    # end
 
-    acc[book_name] = chapter_count 
+    acc[book_name] = chapter_count
     acc
   end
 end
@@ -57,12 +57,12 @@ def lookup_chapter(chapter)
   chapter_string
 end
 
-def write_chapter(chapter, verses)
+def write_chapter(book, chapter, index, verses)
   chapter = chapter.gsub(" ", "_")
 
-  FileUtils.mkdir_p "bibles/#{Thread.current[:bible_abbrev]}"
+  FileUtils.mkdir_p "bibles/#{Thread.current[:bible_abbrev]}/#{book}"
 
-  File.open("bibles/#{Thread.current[:bible_abbrev]}/#{chapter}", "w") do |f|
+  File.open("bibles/#{Thread.current[:bible_abbrev]}/#{book}/#{index}", "w") do |f|
     if !verses
       puts "Something is trying to write #{chapter}"
       return
@@ -94,7 +94,7 @@ def rip_bible
         file_name = chapter.gsub(" ", "_")
         if @failed_files[abbrev].include?(file_name) || !File.exists?("bibles/#{abbrev}/#{file_name}")
           verses = lookup_chapter(chapter)
-          write_chapter(chapter, verses)
+          write_chapter(book, chapter, index, verses)
           puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
         end
       end
