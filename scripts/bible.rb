@@ -4,6 +4,7 @@ require 'fileutils'
 require_relative 'failed_chapters'
 
 VERSIONS = {:english_standard_version => "ESV"} #BibleGateway::VERSIONS
+COPYRIGHT_WORDS = ["copyright", "ESV", "Crossway", "publish"]
 
 def parse_map
   map = File.open("data/bible_map.txt")
@@ -44,7 +45,11 @@ def lookup_chapter(chapter)
   (1...paragraphs.children.count).each do |index|
     paragraph = paragraphs.children[index].content
 
-    if paragraph.length > 5 # assuming we don't have anything more than triple digit 
+    if COPYRIGHT_WORDS.any? { |s| paragraph.include? s }
+      next
+    end
+
+    if paragraph.length > 7 # assuming we don't have anything more than triple digit 
       chapter_string << paragraphs.children[index].content
     end
   end
@@ -64,7 +69,11 @@ def write_chapter(chapter, verses)
     end
 
     verses.each do|t|
-      f.write("#{t}\n")
+      f.write("#{t}")
+
+      if t != verses.last
+        f.write("\n") # only write the new line if we aren't on the last one
+      end
     end
   end
 end

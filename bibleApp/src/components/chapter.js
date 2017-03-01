@@ -56,10 +56,10 @@ class Chapter extends Component {
         return <Verse verse={verse} key={verse.index}></Verse>
       });
 
-      console.log(verses)
+      // console.log(verses)
     }
 
-    console.log(verses);
+    // console.log(verses);
 
     return(
       <View style={styles.container}>
