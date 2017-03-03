@@ -55,11 +55,7 @@ class Chapter extends Component {
       verses = this.getChapterVerses().map( (verse) => {
         return <Verse verse={verse} key={verse.index}></Verse>
       });
-
-      // console.log(verses)
     }
-
-    // console.log(verses);
 
     return(
       <View style={styles.container}>

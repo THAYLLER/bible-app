@@ -11,9 +11,6 @@ const App = TabNavigator({
   },
   Tab2: {
     screen: BibleScreen,
-  },
-  Chapter: {
-    screen: Chapter
   }
 }, {
   tabBarOptions:   {
