@@ -30,9 +30,11 @@ const styles = StyleSheet.create({
 
 class Chapter extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    let chapter = new BibleChapter(this.props.book, this.props.chapter, this.props.bibleVersion)
+    let params = this.props.navigation.state.params;
+
+    let chapter = new BibleChapter(params.book, params.chapter, params.bibleVersion)
 
     this.state = {
       model: chapter
@@ -59,27 +61,16 @@ class Chapter extends Component {
 
     return(
       <View style={styles.container}>
-        <Text style={styles.chapter}>
-          {this.state.model.getBuiltChapterString()}
-        </Text>
         <ScrollView>
           {verses}
         </ScrollView>
       </View>
     );
   }
+  static navigationOptions = {
+    title: ({ state }) => `${state.params.book.getPrettyName()} ${state.params.chapter}`
+  }
 }
-
-// temp for now
-import Ionicons from 'react-native-vector-icons/Ionicons'
-Chapter.navigationOptions = {
-  tabBar: {
-    label: 'Test Chapter',
-    icon: () => (
-      <Ionicons name="ios-bookmarks-outline" size={35} />
-    ),
-  },
-};
 
 Chapter.defaultProps = {
   book: book,

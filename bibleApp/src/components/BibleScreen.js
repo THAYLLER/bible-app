@@ -7,16 +7,17 @@ import {  Text,
           View, 
           Image,
           StyleSheet,
-          ScrollView } from 'react-native';
+          ScrollView,
+          TouchableHighlight
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Accordion from 'react-native-collapsible/Accordion';
+import App from './App'; // required for the navigator
+import Chapter from './chapter';
 // Models
 import BibleBook from '../models/bible_book';
 
-
 class BibleScreen extends Component {
-	// const { textStyle, viewStyle } = styles;
-
   constructor(props) {
     super(props);
 
@@ -37,15 +38,16 @@ class BibleScreen extends Component {
 
     RNFS.readDir(this.getPath())
       .then((directories) => {
-        // TODO: Is this a good idea to do in here?
+        // TODO: Past Mark: Is this a good idea to do in here?
+        // TODO: Future Mark: Yes, this is fine.
         let books = directories.map( (directory, index) => {
           return new BibleBook(directory.name, self.props.bibleVersion);
         });
 
-        console.log(books);
+        // sort
         books = BibleBook.sort(books);
-        console.log(books);
 
+        // rerender component
         self.setState({
           books: books
         });
@@ -57,7 +59,9 @@ class BibleScreen extends Component {
 
   getHeader(book, index, isActive) {
     return(
-      <Text style={styles.chapterText}>{book.getPrettyName()}</Text>
+      <Text style={styles.chapterText}>
+        {book.getPrettyName()}
+      </Text>
     );
   }
 
@@ -65,8 +69,12 @@ class BibleScreen extends Component {
     var chapters = [];
 
     for(var i = 0; i < book.chapters; i++) {
+      var press = this.parent.pushChapterReader.bind(this, book, i + 1);
+
       chapters.push(
-        <Text key={i} style={styles.gridItem}>{i + 1}</Text>
+        <TouchableHighlight key={i} style={styles.gridItem} onPress={press}>
+          <Text>{i + 1}</Text>
+        </TouchableHighlight>
       );
     }
     return(
@@ -76,32 +84,37 @@ class BibleScreen extends Component {
     );
   }
 
+  pushChapterReader(book, chapter) {
+    let navigate = this.parent.props.navigation.navigate;
+
+    navigate('Reader', { book: book, bibleVersion: this.parent.props.bibleVersion, chapter: chapter });
+  }
+
   render() {
     return (
       <View style={styles.view}>
-        <View style={styles.header}>
-          <Text style={styles.textStyle}>Read The Bible Here</Text>
-        </View>
         <ScrollView style={styles.body}>
           <Accordion
             sections={this.state.books}
             renderHeader={this.getHeader}
             renderContent={this.getContent}
+            parent={this}
           />
         </ScrollView>
       </View>
     );
   }
-}
 
-BibleScreen.navigationOptions = {
-  tabBar: {
-    label: 'Bible',
-    icon: () => (
-      <Ionicons name="ios-bookmarks-outline" size={35} />
-    ),
-  },
-};
+  static navigationOptions = {
+    title: 'Bible',
+    tabBar: {
+      label: 'Bible',
+      icon: () => (
+        <Ionicons name="ios-bookmarks-outline" size={35} />
+      )
+    }
+  }
+}
 
 BibleScreen.defaultProps = {
   bibleVersion: 'ESV'

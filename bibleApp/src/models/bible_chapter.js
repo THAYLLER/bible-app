@@ -46,13 +46,13 @@ class BibleChapter {
   getFilePath() {
     let fileName = this.getBuiltChapterString().replace(" ", "_");
 
-    let path = `${RNFS.MainBundlePath}/bibles/${this.version}/${fileName}`;
+    let path = `${RNFS.MainBundlePath}/bibles/${this.version}/${this.book.name}/${this.chapter}`;
 
     return path;
   }
 
   getBuiltChapterString() {
-    return `${this.book} ${this.chapter}`;
+    return `${this.book.getPrettyName()} ${this.chapter}`;
   }
 }
 
