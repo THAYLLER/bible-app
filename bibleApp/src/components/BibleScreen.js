@@ -42,6 +42,10 @@ class BibleScreen extends Component {
           return new BibleBook(directory.name, self.props.bibleVersion);
         });
 
+        console.log(books);
+        books = BibleBook.sort(books);
+        console.log(books);
+
         self.setState({
           books: books
         });
@@ -141,7 +145,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexWrap: 'wrap',
     flexDirection: 'row',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
+    justifyContent: 'center'
   },
   gridItem: {
     padding: 10
