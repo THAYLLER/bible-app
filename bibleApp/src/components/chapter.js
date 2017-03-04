@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { 
-  AppRegistry, 
   Text, 
   View,
   StyleSheet,
   ScrollView
 } from 'react-native';
 
+// Components
+import Verse from './Verse';
+
+// Models
 import BibleChapter from '../models/bible_chapter';
 
 let bibleVersion = "ESV";
@@ -27,14 +30,15 @@ const styles = StyleSheet.create({
 
 class Chapter extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    let chapter = new BibleChapter(this.props.book, this.props.chapter, this.props.bibleVersion)
+    let params = this.props.navigation.state.params;
+
+    let chapter = new BibleChapter(params.book, params.chapter, params.bibleVersion)
 
     this.state = {
       model: chapter
     };
-
 
     var self = this;
     // this feels a bit hacky. but lets run with it for now.
@@ -43,32 +47,30 @@ class Chapter extends Component {
     });
   }
 
+  getChapterVerses() {
+    return this.state.model.verses;
+  }
+
   render() {
+    var verses = [];
+    if(!!this.getChapterVerses()) {
+      verses = this.getChapterVerses().map( (verse) => {
+        return <Verse verse={verse} key={verse.index}></Verse>
+      });
+    }
+
     return(
       <View style={styles.container}>
-        <Text style={styles.chapter}>
-          {this.state.model.getBuiltChapterString()}
-        </Text>
         <ScrollView>
-          <Text>
-            {this.state.model.contents}
-          </Text>
+          {verses}
         </ScrollView>
       </View>
     );
   }
+  static navigationOptions = {
+    title: ({ state }) => `${state.params.book.getPrettyName()} ${state.params.chapter}`
+  }
 }
-
-// temp for now
-import Ionicons from 'react-native-vector-icons/Ionicons'
-Chapter.navigationOptions = {
-  tabBar: {
-    label: 'Test Chapter',
-    icon: () => (
-      <Ionicons name="ios-bookmarks-outline" size={35} />
-    ),
-  },
-};
 
 Chapter.defaultProps = {
   book: book,

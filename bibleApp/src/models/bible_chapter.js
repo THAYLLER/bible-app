@@ -6,12 +6,13 @@ class BibleChapter {
     this.book = book;
     this.chapter = chapter;
     this.version = version;
+    this.verses = [];
   }
 
   fetchContents(callback) {
     // if we have contents, lets return those. 
     // we don't want to read twice from the files
-    if(!!this.contents || this.verses) {
+    if(!!this.contents || this.verses.length > 0) {
       return;
     }
 
@@ -21,7 +22,10 @@ class BibleChapter {
       .then((contents) => {
         self.contents = contents;
 
-        
+        let split = self.contents.split("\n");
+        this.verses = split.map( (item, index) => {
+          return new BibleVerse(index, item);
+        });
         
         // if a callback exists, lets call it
         if(!!callback) {
@@ -29,6 +33,7 @@ class BibleChapter {
         }
       })
       .catch((err) => {
+        console.log(err);
         self.contents = err.message;
 
         // if a callback exists, lets call it
@@ -41,13 +46,13 @@ class BibleChapter {
   getFilePath() {
     let fileName = this.getBuiltChapterString().replace(" ", "_");
 
-    let path = `${RNFS.MainBundlePath}/assets/bibles/${this.version}/${fileName}`;
+    let path = `${RNFS.MainBundlePath}/bibles/${this.version}/${this.book.name}/${this.chapter}`;
 
     return path;
   }
 
   getBuiltChapterString() {
-    return `${this.book} ${this.chapter}`;
+    return `${this.book.getPrettyName()} ${this.chapter}`;
   }
 }
 
