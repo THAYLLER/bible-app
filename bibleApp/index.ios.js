@@ -13,8 +13,6 @@ import {
 } from 'react-native';
 import App from './src/components/App';
 
-import Chapter from './src/components/chapter';
-
 export default class bibleApp extends Component {
   render() {
     return (

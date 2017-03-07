@@ -8,7 +8,8 @@ import {  Text,
           Image,
           StyleSheet,
           ScrollView,
-          TouchableHighlight
+          TouchableHighlight,
+          Platform
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Accordion from 'react-native-collapsible/Accordion';
@@ -26,18 +27,48 @@ class BibleScreen extends Component {
       books: []
     };
 
-    this.fetchBooks();
+    if(Platform.OS === "ios") {
+      this.fetchiOS();
+    } else { // android
+      this.fetchAndroid();
+    }
   }
 
   getPath() {
-    return `${RNFS.MainBundlePath}/bibles/${this.props.bibleVersion}`;
+    return `bibles/${this.props.bibleVersion}`;
   }
 
-  fetchBooks() {
-    var self = this;
+  fetchiOS() {
+    let self = this;
+    let path = `${RNFS.MainBundlePath}/${this.getPath()}`
 
-    RNFS.readDir(this.getPath())
+    RNFS.readDir(path)
       .then((directories) => {
+        // TODO: Past Mark: Is this a good idea to do in here?
+        // TODO: Future Mark: Yes, this is fine.
+        let books = directories.map( (directory, index) => {
+          return new BibleBook(directory.name, self.props.bibleVersion);
+        });
+
+        // sort
+        books = BibleBook.sort(books);
+
+        // rerender component
+        self.setState({
+          books: books
+        });
+      })
+      .catch( (err) => {
+        console.log(err.message, err.code);
+      });
+  }
+
+  fetchAndroid() {
+    console.log(this.getPath());  
+    let self = this;
+    RNFS.readDirAssets(this.getPath())
+      .then((directories) => {
+        console.log(directories);
         // TODO: Past Mark: Is this a good idea to do in here?
         // TODO: Future Mark: Yes, this is fine.
         let books = directories.map( (directory, index) => {
