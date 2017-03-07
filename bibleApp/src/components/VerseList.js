@@ -8,18 +8,18 @@ class VerseList extends Component {
 		verseOfTheDay: {},
 	};
 	// componentWillMount method automatically gets executed as soon as this component is about to get rendered to the screen.
-	componentWillMount() {
-		fetch('https://www.ourmanna.com/verses/api/get/?format=json')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({ verseOfTheDay: responseJson.verse.details });
-      })
-      .catch((error) => {
-        console.error(error);
-      });			
-	}
+componentWillMount() {
+	fetch('https://www.ourmanna.com/verses/api/get/?format=json')
+		.then((response) => response.json())
+		.then((responseJson) => {
+			this.setState({ verseOfTheDay: responseJson.verse.details });
+		})
+		.catch((error) => {
+			console.error(error);
+		});			
+}
 
-	render() {
+render() {
 		return (
 			<ScrollView>
 				<VerseCard key={this.state.verseOfTheDay.reference} verse={this.state.verseOfTheDay} />
