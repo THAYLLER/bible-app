@@ -7,7 +7,7 @@ class VerseList extends Component {
 	state = { 
 		verseOfTheDay: {},
 	};
-	// componentWillMount method automatically gets executed as soon as this component is about to get rendered to the screen.
+// componentWillMount method automatically gets executed as soon as this component is about to get rendered to the screen.
 componentWillMount() {
 	fetch('https://www.ourmanna.com/verses/api/get/?format=json')
 		.then((response) => response.json())
