@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 
 const CORRECT_ORDER = [ // Is this valid across all versions?
@@ -75,8 +76,30 @@ class BibleBook {
     this.bibleVersion = bibleVersion;
     this.chapters = 0;
 
+    if(Platform.OS === "ios") {
+      this.readiOS();
+    } else { // android
+      this.readAndroid();
+    }
+  }
+
+  readiOS() {
     let self = this;
-    RNFS.readDir(this.getPath())
+    let path = `${RNFS.MainBundlePath}/${this.getPath()}`;
+
+    RNFS.readDir(path)
+      .then( (files) => {
+        self.chapters = files.length; // this might need to be more than an integer
+      })
+      .catch( (err) => {
+        console.log(err.message, err.code);
+      });
+  }
+
+  readAndroid() {
+    let self = this;
+
+    RNFS.readDirAssets(this.getPath())
       .then( (files) => {
         self.chapters = files.length; // this might need to be more than an integer
       })
@@ -96,7 +119,7 @@ class BibleBook {
   }
 
   getPath() {
-    return `${RNFS.MainBundlePath}/bibles/${this.bibleVersion}/${this.name}`;
+    return `bibles/${this.bibleVersion}/${this.name}`;
   }
 
   static sort(books) {
