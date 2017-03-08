@@ -2,12 +2,16 @@
 import React from 'react';
 import { Text, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import VerseList from './VerseList';
 
 const HomeScreen = () => {
 	const { textStyle, viewStyle } = styles;
   return (
-  	<View style={viewStyle}>
-    	<Text style={textStyle}>Home</Text>
+  	<View style={{ flex: 1 }}>
+	  	<View style={viewStyle}>
+	    	<Text style={textStyle}>Home</Text>
+	    </View>
+	    <VerseList />
     </View>
   );
 };
