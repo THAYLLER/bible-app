@@ -3,6 +3,7 @@ import React from 'react';
 import { TabNavigator } from 'react-navigation';
 import HomeScreen from './HomeScreen';
 import StackReader from './StackReader';
+import AddNoteForm from './AddNoteForm';
 
 const App = TabNavigator({
   Tab1: {
@@ -10,7 +11,10 @@ const App = TabNavigator({
   },
   Tab2: {
     screen: StackReader,
-  }
+  },
+  Tab3: {
+    screen: AddNoteForm,
+  }  
 }, {
   tabBarOptions:   {
     initialRouteName: 'Tab1',
