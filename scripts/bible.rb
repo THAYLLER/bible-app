@@ -1,10 +1,10 @@
-require 'bible_gateway'
+require 'biblesearch-api'
+require 'nokogiri'
 require 'byebug'
 require 'fileutils'
-require_relative 'failed_chapters'
-
-VERSIONS = {:english_standard_version => "ESV"} #BibleGateway::VERSIONS
-COPYRIGHT_WORDS = ["copyright", "ESV", "Crossway", "publish"]
+require 'dotenv/load'
+require 'json'
+require 'pp'
 
 def parse_map
   map = File.open("data/bible_map.txt")
@@ -29,74 +29,73 @@ end
 
 
 def lookup_chapter(chapter)
-  b = BibleGateway.new(Thread.current[:bible_version]) # defaults to :king_james_version, but can be initialized to different version
+  bible = BibleSearch.new(ENV['API_KEY'])
+  byebug
   begin
-    response = b.lookup(chapter) # sometimes biblegateway fails
+    verses = bible.verses(chapter.id)
+    while verses == [] # because that's how you detect a response failure
+      sleep 5 # Give time for the web server to cool down
+      verses = bible.verses(chapter.id)
+    end
   rescue StandardError => e
-    puts "Unable to pull chapter #{chapter}"
+    puts "Unable to pull chapter #{chapter.id}"
     return e.message
   end
 
-  doc = Nokogiri::HTML(response[:content])
-  # Select all paragraphs`
-  paragraphs = doc.xpath("//p")
-  chapter_string = []
-
-  (1...paragraphs.children.count).each do |index|
-    paragraph = paragraphs.children[index].content
-
-    if COPYRIGHT_WORDS.any? { |s| paragraph.include? s }
-      next
+  if !verses.is_a? Array
+    verses.collection.inject({}) do |acc, verse|
+      doc = Nokogiri::HTML(verse.text)
+      acc[verse.verse] = doc.xpath("//text()").to_s
+      acc
     end
-
-    if paragraph.length > 7 # assuming we don't have anything more than triple digit 
-      chapter_string << paragraphs.children[index].content
-    end
+  else
+    puts "lookup_chapter missed for chapter #{chapter.id}"
+    puts "Debug info: #{verses}"
   end
-
-  chapter_string
 end
 
-def write_chapter(book, chapter, index, verses)
-  chapter = chapter.gsub(" ", "_")
+def write_chapter(version, book, chapter, verses)
+  chapter_name = chapter.chapter.gsub(" ", "_")
 
-  FileUtils.mkdir_p "bibles/#{Thread.current[:bible_abbrev]}/#{book}"
+  FileUtils.mkdir_p "bibles/#{version.id}/#{book.name}"
 
-  File.open("bibles/#{Thread.current[:bible_abbrev]}/#{book}/#{index}", "w") do |f|
+  File.open("bibles/#{version.id}/#{book.name}/#{chapter.chapter}", "w") do |f|
     if !verses
-      puts "Something is trying to write #{chapter}"
+      puts "Something is trying to write #{chapter.id}"
       return
     end
 
-    verses.each do|t|
-      f.write("#{t}")
-
-      if t != verses.last
-        f.write("\n") # only write the new line if we aren't on the last one
-      end
-    end
+    f.write(verses.to_json)
   end
 end
 
 def rip_bible
-  bible_map = parse_map
+  version_info = Thread.current[:bible_info]
 
-  version = Thread.current[:bible_version]
-  abbrev = Thread.current[:bible_abbrev]
+  # Lets get a list of those books
+  bible = BibleSearch.new(ENV['API_KEY'])
+  books = bible.books(version_info.id)
 
-  threads = bible_map.map do |book, chapter_count|
+  threads = books.collection.map do |book|
     Thread.new do # :awwyeah:
-      Thread.current[:bible_version] = version
-      Thread.current[:bible_abbrev] = abbrev
+      Thread.current[:bible_info] = version_info
+      bible = BibleSearch.new(ENV['API_KEY'])
 
-      (1..chapter_count).each do |index|
-        chapter = "#{book} #{index}"
-        file_name = chapter.gsub(" ", "_")
-        if @failed_files[abbrev].include?(file_name) || !File.exists?("bibles/#{abbrev}/#{file_name}")
-          verses = lookup_chapter(chapter)
-          write_chapter(book, chapter, index, verses)
-          puts "Wrote Chapter #{chapter} for translation #{Thread.current[:bible_version]}"
+      chapters = bible.chapters(version_id: version_info.id, book_id: book.abbr)
+
+      if !chapters.is_a? Array
+        chapters.collection.each do |chapter|
+          chapter_name = "#{book.name} #{chapter.chapter}"
+          file_name = chapter_name.gsub(" ", "_")
+          if !File.exists?("bibles/#{version_info.id}/#{file_name}")
+            verses = lookup_chapter(chapter)
+            write_chapter(version_info, book, chapter, verses)
+            puts "Wrote Chapter #{chapter_name} for translation #{version_info.id}"
+          end
         end
+      else
+        puts "rip_bible missed for book #{book.id}"
+        puts "Debug info #{chapters}"
       end
     end
   end
@@ -105,17 +104,20 @@ def rip_bible
   threads.each(&:join)
 end
 
-@failed_files = file_failures_by_version
+biblesearch = BibleSearch.new(ENV['API_KEY'])
+versions = biblesearch.versions(language: 'eng-US') # get all english versions
 
-total_file_count = @failed_files.inject(0) { |acc, (k, v)| acc += v.count; acc }
-  
-puts "I am going to re-pull approximately #{total_file_count} bible chapters"
+puts "Found #{versions.collection.count} english versions..."
+# versions = [versions.collection.first] # hack for only one process
+sleep 3
 
-processes = VERSIONS.map do |version, abbrev|
+processes = versions.collection.map do |version|
+  if version.id == "eng-GNTD" || version.id == "eng-KJVA"
+    next # Skip this version, it breaks
+
   Process.fork do
-    Thread.current[:bible_version] = version
-    Thread.current[:bible_abbrev] = abbrev
-    rip_bible # too much? maybe...
+    Thread.current[:bible_info] = version
+    rip_bible # Past Mark: too much? maybe... Future Mark: Not at all :D
   end
 end
 
