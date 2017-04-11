@@ -5,6 +5,7 @@ require 'fileutils'
 require 'dotenv/load'
 require 'json'
 require 'pp'
+require 'erb'
 
 def parse_map
   map = File.open("data/bible_map.txt")
@@ -30,10 +31,10 @@ end
 
 def lookup_chapter(chapter)
   bible = BibleSearch.new(ENV['API_KEY'])
-  byebug
+
   begin
     verses = bible.verses(chapter.id)
-    while verses == [] # because that's how you detect a response failure
+    while verses == [] do # because that's how you detect a response failure
       sleep 5 # Give time for the web server to cool down
       verses = bible.verses(chapter.id)
     end
@@ -50,7 +51,6 @@ def lookup_chapter(chapter)
     end
   else
     puts "lookup_chapter missed for chapter #{chapter.id}"
-    puts "Debug info: #{verses}"
   end
 end
 
@@ -69,8 +69,13 @@ def write_chapter(version, book, chapter, verses)
   end
 end
 
-def rip_bible
+def rip_bible(map_only = false)
   version_info = Thread.current[:bible_info]
+
+  @version = version_info.id
+  @contents = {}
+
+  bible_map = ERB.new(File.read('bible_map.js.erb'))
 
   # Lets get a list of those books
   bible = BibleSearch.new(ENV['API_KEY'])
@@ -84,24 +89,35 @@ def rip_bible
       chapters = bible.chapters(version_id: version_info.id, book_id: book.abbr)
 
       if !chapters.is_a? Array
-        chapters.collection.each do |chapter|
-          chapter_name = "#{book.name} #{chapter.chapter}"
-          file_name = chapter_name.gsub(" ", "_")
-          if !File.exists?("bibles/#{version_info.id}/#{file_name}")
-            verses = lookup_chapter(chapter)
-            write_chapter(version_info, book, chapter, verses)
-            puts "Wrote Chapter #{chapter_name} for translation #{version_info.id}"
+        @contents[book.name] = chapters.collection.count
+
+        unless map_only
+          chapters.collection.each do |chapter|
+            chapter_name = "#{book.name} #{chapter.chapter}"
+            file_name = chapter_name.gsub(" ", "_")
+            if !File.exists?("bibles/#{version_info.id}/#{file_name}")
+              verses = lookup_chapter(chapter)
+              write_chapter(version_info, book, chapter, verses)
+              puts "Wrote Chapter #{chapter_name} for translation #{version_info.id}"
+            end
           end
         end
       else
         puts "rip_bible missed for book #{book.id}"
-        puts "Debug info #{chapters}"
       end
     end
   end
 
   # Waiting until exit
   threads.each(&:join)
+
+  # Write out the map
+  @contents = @contents.to_json
+  renderer = bible_map.result(binding())
+
+  File.open("bibles/#{version_info.id}/bible_map_#{version_info.id}.js", "w+") do |f|
+    f.write(renderer)
+  end
 end
 
 biblesearch = BibleSearch.new(ENV['API_KEY'])
@@ -111,13 +127,16 @@ puts "Found #{versions.collection.count} english versions..."
 # versions = [versions.collection.first] # hack for only one process
 sleep 3
 
+map_only = ARGV[0]
+
 processes = versions.collection.map do |version|
   if version.id == "eng-GNTD" || version.id == "eng-KJVA"
     next # Skip this version, it breaks
+  end
 
   Process.fork do
     Thread.current[:bible_info] = version
-    rip_bible # Past Mark: too much? maybe... Future Mark: Not at all :D
+    rip_bible(!!map_only) # Past Mark: too much? maybe... Future Mark: Not at all :D
   end
 end
 
