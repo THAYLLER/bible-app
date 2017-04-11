@@ -10,12 +10,12 @@ const CORRECT_ORDER = [ // Is this valid across all versions?
   'Joshua',
   'Judges',
   'Ruth',
-  '1_Samuel',
-  '2_Samuel',
-  '1_Kings', 
-  '2_Kings',
-  '1_Chronicles',
-  '2_Chronicles',
+  '1 Samuel',
+  '2 Samuel',
+  '1 Kings', 
+  '2 Kings',
+  '1 Chronicles',
+  '2 Chronicles',
   'Ezra', 
   'Nehemiah',  
   'Esther', 
@@ -47,65 +47,34 @@ const CORRECT_ORDER = [ // Is this valid across all versions?
   'John',
   'Acts',
   'Romans',
-  '1_Corinthians',
-  '2_Corinthians',
+  '1 Corinthians',
+  '2 Corinthians',
   'Galatians',
   'Ephesians',
   'Philippians',
   'Colossians',
-  '1_Thessalonians',
-  '2_Thessalonians',
-  '1_Timothy',
-  '2_Timothy',
+  '1 Thessalonians',
+  '2 Thessalonians',
+  '1 Timothy',
+  '2 Timothy',
   'Titus',
   'Philemon',
   'Hebrews', 
   'James',
-  '1_Peter',
-  '2_Peter',
-  '1_John',
-  '2_John',
-  '3_John',
+  '1 Peter',
+  '2 Peter',
+  '1 John',
+  '2 John',
+  '3 John',
   'Jude',
   'Revelation'
 ];
 
 class BibleBook {
-  constructor(name, bibleVersion) {
+  constructor(name, bibleVersion, chapters) {
     this.name = name;
     this.bibleVersion = bibleVersion;
-    this.chapters = 0;
-
-    if(Platform.OS === "ios") {
-      this.readiOS();
-    } else { // android
-      this.readAndroid();
-    }
-  }
-
-  readiOS() {
-    let self = this;
-    let path = `${RNFS.MainBundlePath}/${this.getPath()}`;
-
-    RNFS.readDir(path)
-      .then( (files) => {
-        self.chapters = files.length; // this might need to be more than an integer
-      })
-      .catch( (err) => {
-        console.log(err.message, err.code);
-      });
-  }
-
-  readAndroid() {
-    let self = this;
-
-    RNFS.readDirAssets(this.getPath())
-      .then( (files) => {
-        self.chapters = files.length; // this might need to be more than an integer
-      })
-      .catch( (err) => {
-        console.log(err.message, err.code);
-      });
+    this.chapters = chapters;
   }
 
   getPrettyName() {
@@ -116,10 +85,6 @@ class BibleBook {
     });
 
     return corrected.join(' ');
-  }
-
-  getPath() {
-    return `bibles/${this.bibleVersion}/${this.name}`;
   }
 
   static sort(books) {

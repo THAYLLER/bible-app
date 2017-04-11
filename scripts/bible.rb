@@ -112,7 +112,6 @@ def rip_bible(map_only = false)
   threads.each(&:join)
 
   # Write out the map
-  @contents = @contents.to_json
   renderer = bible_map.result(binding())
 
   File.open("bibles/#{version_info.id}/bible_map_#{version_info.id}.js", "w+") do |f|

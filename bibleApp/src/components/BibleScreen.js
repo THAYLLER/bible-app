@@ -18,75 +18,86 @@ import Chapter from './chapter';
 // Models
 import BibleBook from '../models/bible_book';
 
+// Sucky awful including of all the maps
+import eng_ESVMap from '../maps/bible_map_eng-ESV';
+
 class BibleScreen extends Component {
   constructor(props) {
     super(props);
 
-    // Set the default state for the books
+    // Lets just sort by the bible map    
+    var books = [];
+
+    for(var bible in eng_ESVMap) {
+      books.push(new BibleBook(bible, 'eng-ESV', eng_ESVMap[bible]))
+    }
+
+    books = BibleBook.sort(books);
+
     this.state = {
-      books: []
+      books: books
     };
 
-    if(Platform.OS === "ios") {
-      this.fetchiOS();
-    } else { // android
-      this.fetchAndroid();
-    }
+    // if(Platform.OS === "ios") {
+    //   this.fetchiOS();
+    // } else { // android
+    //   this.fetchAndroid();
+    // }
   }
 
-  getPath() {
-    return `bibles/${this.props.bibleVersion}`;
-  }
+  // getPath() {
+  //   return `bibles/${this.props.bibleVersion}`;
+  // }
 
-  fetchiOS() {
-    let self = this;
-    let path = `${RNFS.MainBundlePath}/${this.getPath()}`
+  // fetchiOS() {
+  //   let self = this;
+  //   let path = `${RNFS.MainBundlePath}/${this.getPath()}`
 
-    RNFS.readDir(path)
-      .then((directories) => {
-        // TODO: Past Mark: Is this a good idea to do in here?
-        // TODO: Future Mark: Yes, this is fine.
-        let books = directories.map( (directory, index) => {
-          return new BibleBook(directory.name, self.props.bibleVersion);
-        });
+  //   RNFS.readDir(path)
+  //     .then((directories) => {
+  //       // TODO: Past Mark: Is this a good idea to do in here?
+  //       // TODO: Future Mark: Yes, this is fine.
+  //       let books = directories.map( (directory, index) => {
+  //         return new BibleBook(directory.name, self.props.bibleVersion);
+  //       });
 
-        // sort
-        books = BibleBook.sort(books);
+  //       // sort
+  //       books = BibleBook.sort(books);
 
-        // rerender component
-        self.setState({
-          books: books
-        });
-      })
-      .catch( (err) => {
-        console.log(err.message, err.code);
-      });
-  }
+  //       // rerender component
+  //       self.setState({
+  //         books: books
+  //       });
+  //     })
+  //     .catch( (err) => {
+  //       console.log(err.message, err.code);
+  //     });
+  // }
 
-  fetchAndroid() {
-    console.log(this.getPath());  
-    let self = this;
-    RNFS.readDirAssets(this.getPath())
-      .then((directories) => {
-        console.log(directories);
-        // TODO: Past Mark: Is this a good idea to do in here?
-        // TODO: Future Mark: Yes, this is fine.
-        let books = directories.map( (directory, index) => {
-          return new BibleBook(directory.name, self.props.bibleVersion);
-        });
+  // fetchAndroid() {
+  //   console.log(this.getPath());  
+  //   let self = this;
+  //   RNFS.readDirAssets(this.getPath())
+  //     .then((directories) => {
+  //       console.log(directories);
+  //       // TODO: Past Mark: Is this a good idea to do in here?
+  //       // TODO: Future Mark: Yes, this is fine.
+  //       let books = directories.map( (directory, index) => {
+  //         return new BibleBook(directory.name, self.props.bibleVersion);
+  //       });
 
-        // sort
-        books = BibleBook.sort(books);
+  //       // sort
+  //       books = BibleBook.sort(books);
 
-        // rerender component
-        self.setState({
-          books: books
-        });
-      })
-      .catch( (err) => {
-        console.log(err.message, err.code);
-      });
-  }
+  //       // rerender component
+  //       self.setState({
+  //         books: books
+  //       });
+  //     })
+  //     .catch( (err) => {
+  //       console.log(err.message, err.code);
+  //     });
+  // }
 
   getHeader(book, index, isActive) {
     return(
@@ -148,7 +159,7 @@ class BibleScreen extends Component {
 }
 
 BibleScreen.defaultProps = {
-  bibleVersion: 'ESV'
+  bibleVersion: 'eng-ESV'
 };
 
 BibleScreen.propTypes = {

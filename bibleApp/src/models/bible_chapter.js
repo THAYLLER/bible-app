@@ -41,7 +41,7 @@ class BibleChapter {
     .then((contents) => {
       self.contents = contents;
 
-      let split = self.contents.split("\n");
+      let split = JSON.parse(self.contents);
       this.verses = split.map( (item, index) => {
         return new BibleVerse(index, item);
       });
