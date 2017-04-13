@@ -1,12 +1,14 @@
 import React from 'react';
 // import { View, Image, StyleSheet } from 'react-native';
-import { TabNavigator } from 'react-navigation';
-import HomeScreen from './HomeScreen';
+import { TabNavigator, StackNavigator } from 'react-navigation';
+// import HomeScreen from './HomeScreen';
+import HomeStack from './HomeStack';
 import StackReader from './StackReader';
+
 
 const App = TabNavigator({
   Tab1: {
-    screen: HomeScreen,
+    screen: HomeStack,
   },
   Tab2: {
     screen: StackReader,
@@ -32,9 +34,9 @@ const App = TabNavigator({
   },
 });
 
-App.navigationOptions = {
-  title: '',
-};
+// App.navigationOptions = {
+//   title: '',
+// };
 
 
 export default App;

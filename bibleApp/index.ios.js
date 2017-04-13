@@ -11,6 +11,7 @@ import {
   Text,
   View
 } from 'react-native';
+import * as firebase from 'firebase';
 import App from './src/components/App';
 
 export default class bibleApp extends Component {

@@ -1,30 +1,39 @@
 // Import a library to help create a component
-import React from 'react';
-import { Text, View, Image } from 'react-native';
+import React, { Component, PropTypes } from 'react';
+import { View, TouchableHighlight } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import VerseList from './VerseList';
+import { 
+  Content,
+  Container,
+  Icon,
+  Button,
+  Text
+} from 'native-base';
 
-const HomeScreen = () => {
-	const { textStyle, viewStyle } = styles;
-  return (
-  	<View style={{ flex: 1 }}>
-	  	<View style={viewStyle}>
-	    	<Text style={textStyle}>Home</Text>
-	    </View>
-	    <VerseList />
-    </View>
-  );
-};
+class HomeScreen extends Component {
+  render() {
+    return (
+    	<View style={{ flex: 1 }}>
+        <Button onPress={() => this.props.navigation.navigate('SignUpScreen')} title="Sign Up">
+          <Text>Sign Up!</Text>
+        </Button>
+  	    <VerseList />
+      </View>
+    );
+  }
 
-HomeScreen.navigationOptions = {
-  // title: 'Tab1'
-  tabBar: {
-    label: 'Home',
-    icon: () => (
-      <Ionicons name="ios-home-outline" size={35} />
-    ),
-  },
-};
+  static navigationOptions = {
+    title: 'Home',
+
+    tabBar: {
+      label: 'Home',
+      icon: () => (
+        <Ionicons name="ios-home-outline" size={35} />
+      ),
+    },
+  };  
+}
 
 const styles = {
 	viewStyle: {
