@@ -5,11 +5,14 @@ import {
   BackAndroid,
   StatusBar
 } from 'react-native'
+import RNFS from 'react-native-fs';
+import RNFetchBlob from 'react-native-fetch-blob';
 import { 
   Button, 
   Text
 } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import * as firebase from 'firebase';
 import VerseCard from  './VerseCard';
 
 
@@ -21,35 +24,47 @@ class AddNoteForm extends Component {
       title: '',
       body: ''
     }
+
+    this.createNote = this.createNote.bind(this);
+    this.uploadNote = this.uploadNote.bind(this);
   }
 
-  addNote() {
-    this.setState({
-      title: this.state.title,
-      body: this.state.body
-    })
-    console.log("Ok. Next thing to do is fetch!!!");
-    fetch('https://www.googleapis.com/upload/storage/v1/b/bible-app-tezt2/o', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: this.state.title,
-        body: this.state.body,
+  uploadNote(path) {
+    const Blob = RNFetchBlob.polyfill.Blob;
+    const fs = RNFetchBlob.fs
+    window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+    window.Blob = Blob
+    return Blob.build(RNFetchBlob.wrap(path))
+    .then((blob) => {
+      return firebase.storage().ref().child('notes').put(blob)
+      .then(snapshot => {
+        console.log('Uploaded note to Firebase Storage', snapshot);
+        blob.close();
       })
-    })
-    .then((response) => {
-      console.log("actually got a response!");
-    })
-    .catch((error) => {
-      console.error(error);
-    }); 
+      .catch(err => {
+        // TODO: Proper error handling
+        console.error('There was an error: ', err);
+      });
+    });
+  }
 
-    console.log("this is what state loooks like after pressing the button");
-    console.log(this.state);
-  }  
+  createNote() {
+    console.log("Here goes nothing..");
+    var path = `${RNFS.DocumentDirectoryPath}/${this.state.title}.txt`;
+    const Blob = RNFetchBlob.polyfill.Blob;
+    console.log(path);
+
+    // write the file
+    RNFS.writeFile(path, `${this.state.body}`, 'utf8')
+      .then((success) => {
+        console.log('FILE WRITTEN!');
+        this.uploadNote(path);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+
+  }
 
   render() {
     console.log("here is the state!");
@@ -92,8 +107,8 @@ class AddNoteForm extends Component {
               />
             </View>
 
-            <Button onPress={this.addNote.bind(this)}>
-              <Text>More Info</Text>
+            <Button onPress={() =>this.createNote()}>
+              <Text>Add Note</Text>
             </Button>
 
           </View>
