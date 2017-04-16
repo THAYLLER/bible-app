@@ -11,10 +11,16 @@ import {
   Text,
   View
 } from 'react-native';
-import * as firebase from 'firebase';
+import Firebase from './src/config/firebase';
 import App from './src/components/App';
 
 export default class bibleApp extends Component {
+  constructor(props){
+    super(props);
+
+    Firebase.initialise();
+  }
+
   render() {
     return (
       <App />

@@ -1,6 +1,6 @@
 // Import a library to help create a component
 import React, { Component, PropTypes } from 'react';
-import { View, TouchableHighlight } from 'react-native';
+import { View, ActivityIndicator, TouchableHighlight } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import VerseList from './VerseList';
 import { 
@@ -10,18 +10,93 @@ import {
   Button,
   Text
 } from 'native-base';
+import * as firebase from 'firebase';
 
 class HomeScreen extends Component {
-  render() {
-    return (
-    	<View style={{ flex: 1 }}>
-        <Button onPress={() => this.props.navigation.navigate('SignUpScreen')} title="Sign Up">
-          <Text>Sign Up!</Text>
-        </Button>
-  	    <VerseList />
-      </View>
-    );
+  constructor(props){
+    super(props);
+
+    this.state = {
+      isAuthed: false,
+      userLoaded: false,
+      email: '',
+      password: ''
+    };
+
+    this.signout = this.signout.bind(this);
   }
+
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("according to this, the user is logged in!");
+        // User is signed in.
+        this.setState({
+          isAuthed: true
+        })  
+      } else {
+        console.log("according to this, the user is NOT logged in...");
+        // User is signed out.
+        // ...
+      }
+
+      this.setState({
+        userLoaded: true
+      })      
+
+    }.bind(this));  
+  }
+
+  signout(){
+    try {
+        firebase.auth().signOut();
+
+        // Sign-out successful.
+        console.log("sign out was successful!");
+        this.setState({
+          isAuthed: false
+        }); 
+    } catch (error) {
+        // An error happened.
+        console.log("sign out was NOT successful...");
+        console.log(error);
+    }
+  } 
+
+  render() {
+    if (this.state.userLoaded) {
+      if (this.state.isAuthed === false){
+        return (
+        	<View style={{ flex: 1 }}>
+            <Button onPress={() => this.props.navigation.navigate('SignUpScreen')} title="Sign Up">
+              <Text>Sign Up!</Text>
+            </Button>
+            <Button onPress={() => this.props.navigation.navigate('LogInScreen')} title="Log In" success>
+              <Text>Log In!</Text>
+            </Button>          
+      	    <VerseList />
+          </View>
+        );
+      } else {
+        return (
+          <View style={{ flex: 1 }}>
+            <VerseList />
+            <Button onPress={() => this.signout()} danger>
+              <Text>Sign Out!</Text>
+            </Button>            
+          </View>
+        );
+      }
+    } else {
+      return (
+        <ActivityIndicator
+                animating={this.state.animating}
+                style={[styles.centering, {height: 80}]}
+                size="large"
+        />      
+      )
+    }
+  }  
 
   static navigationOptions = {
     title: 'Home',
