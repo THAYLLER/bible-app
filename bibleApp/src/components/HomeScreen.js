@@ -4,11 +4,8 @@ import { View, ActivityIndicator, TouchableHighlight } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import VerseList from './VerseList';
 import { 
-  Content,
-  Container,
-  Icon,
   Button,
-  Text
+  Text 
 } from 'native-base';
 import * as firebase from 'firebase';
 
@@ -83,7 +80,7 @@ class HomeScreen extends Component {
             <VerseList />
             <Button onPress={() => this.signout()} danger>
               <Text>Sign Out!</Text>
-            </Button>            
+            </Button>                                          
           </View>
         );
       }
@@ -99,7 +96,14 @@ class HomeScreen extends Component {
   }  
 
   static navigationOptions = {
-    title: 'Home',
+    header: (navigation) => ({
+      title: 'Home',
+      right: (
+          <Button onPress={() => navigation.navigate('UserDetail')}>
+            <Text>Account</Text>
+          </Button>         
+        )
+    }),
 
     tabBar: {
       label: 'Home',
@@ -127,7 +131,10 @@ const styles = {
 	},
 	textStyle: {
 		fontSize: 20
-	}
+	},
+  cardStyle: {
+    paddingBottom: 0
+  }  
 };
 
 // Make the component available to other parts of the App.
