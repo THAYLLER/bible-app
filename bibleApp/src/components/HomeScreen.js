@@ -64,13 +64,7 @@ class HomeScreen extends Component {
     if (this.state.userLoaded) {
       if (this.state.isAuthed === false){
         return (
-        	<View style={{ flex: 1 }}>
-            <Button onPress={() => this.props.navigation.navigate('SignUpScreen')} title="Sign Up">
-              <Text>Sign Up!</Text>
-            </Button>
-            <Button onPress={() => this.props.navigation.navigate('LogInScreen')} title="Log In" success>
-              <Text>Log In!</Text>
-            </Button>          
+        	<View style={{ flex: 1 }}>        
       	    <VerseList />
           </View>
         );
