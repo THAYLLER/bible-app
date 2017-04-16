@@ -1,30 +1,112 @@
 // Import a library to help create a component
-import React from 'react';
-import { Text, View, Image } from 'react-native';
+import React, { Component, PropTypes } from 'react';
+import { View, ActivityIndicator, TouchableHighlight } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import VerseList from './VerseList';
+import { 
+  Button,
+  Text 
+} from 'native-base';
+import * as firebase from 'firebase';
 
-const HomeScreen = () => {
-	const { textStyle, viewStyle } = styles;
-  return (
-  	<View style={{ flex: 1 }}>
-	  	<View style={viewStyle}>
-	    	<Text style={textStyle}>Home</Text>
-	    </View>
-	    <VerseList />
-    </View>
-  );
-};
+class HomeScreen extends Component {
+  constructor(props){
+    super(props);
 
-HomeScreen.navigationOptions = {
-  // title: 'Tab1'
-  tabBar: {
-    label: 'Home',
-    icon: () => (
-      <Ionicons name="ios-home-outline" size={35} />
-    ),
-  },
-};
+    this.state = {
+      isAuthed: false,
+      userLoaded: false,
+      email: '',
+      password: ''
+    };
+
+    this.signout = this.signout.bind(this);
+  }
+
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("according to this, the user is logged in!");
+        // User is signed in.
+        this.setState({
+          isAuthed: true
+        })  
+      } else {
+        console.log("according to this, the user is NOT logged in...");
+        // User is signed out.
+        // ...
+      }
+
+      this.setState({
+        userLoaded: true
+      })      
+
+    }.bind(this));  
+  }
+
+  signout(){
+    try {
+        firebase.auth().signOut();
+
+        // Sign-out successful.
+        console.log("sign out was successful!");
+        this.setState({
+          isAuthed: false
+        }); 
+    } catch (error) {
+        // An error happened.
+        console.log("sign out was NOT successful...");
+        console.log(error);
+    }
+  } 
+
+  render() {
+    if (this.state.userLoaded) {
+      if (this.state.isAuthed === false){
+        return (
+        	<View style={{ flex: 1 }}>        
+      	    <VerseList />
+          </View>
+        );
+      } else {
+        return (
+          <View style={{ flex: 1 }}>
+            <VerseList />
+            <Button onPress={() => this.signout()} danger>
+              <Text>Sign Out!</Text>
+            </Button>                                          
+          </View>
+        );
+      }
+    } else {
+      return (
+        <ActivityIndicator
+                animating={this.state.animating}
+                style={[styles.centering, {height: 80}]}
+                size="large"
+        />      
+      )
+    }
+  }  
+
+  static navigationOptions = {
+    header: (navigation) => ({
+      title: 'Home',
+      right: (
+          <Button onPress={() => navigation.navigate('UserDetail')}>
+            <Text>Account</Text>
+          </Button>         
+        )
+    }),
+
+    tabBar: {
+      label: 'Home',
+      icon: () => (
+        <Ionicons name="ios-home-outline" size={35} />
+      ),
+    },
+  };  
+}
 
 const styles = {
 	viewStyle: {
@@ -43,7 +125,10 @@ const styles = {
 	},
 	textStyle: {
 		fontSize: 20
-	}
+	},
+  cardStyle: {
+    paddingBottom: 0
+  }  
 };
 
 // Make the component available to other parts of the App.

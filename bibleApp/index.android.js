@@ -6,10 +6,17 @@
 
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
+import Firebase from './src/config/firebase';
 import App from './src/components/App';
 
 
 export default class bibleApp extends Component {
+  constructor(props){
+    super(props);
+
+    Firebase.initialise();
+  }
+
   render() {
     return (
       <App />
