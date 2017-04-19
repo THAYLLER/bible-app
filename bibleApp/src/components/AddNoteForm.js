@@ -22,28 +22,41 @@ class AddNoteForm extends Component {
 
     this.state = {
       title: '',
-      body: ''
+      body: '',
+      response: ''
     }
 
     this.createNote = this.createNote.bind(this);
     this.uploadNote = this.uploadNote.bind(this);
+    this.goToHome = this.goToHome.bind(this);
   }
 
   uploadNote(path) {
     const Blob = RNFetchBlob.polyfill.Blob;
     const fs = RNFetchBlob.fs
+    const user = firebase.auth().currentUser;
     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
     window.Blob = Blob
     return Blob.build(RNFetchBlob.wrap(path))
     .then((blob) => {
-      return firebase.storage().ref().child('notes').put(blob)
+      return firebase.storage().ref().child(`notes/${user.uid}/${this.state.title}.txt`).put(blob)
       .then(snapshot => {
         console.log('Uploaded note to Firebase Storage', snapshot);
         blob.close();
+        this.setState({
+          response: "Note Was Saved!"
+        });
+
+        // setTimeout(() => {
+        //     this.props.navigation.navigate('HomeScreen')
+        // }, 1500);
       })
       .catch(err => {
         // TODO: Proper error handling
         console.error('There was an error: ', err);
+        this.setState({
+          response: error.toString()
+        });        
       });
     });
   }
@@ -107,10 +120,13 @@ class AddNoteForm extends Component {
               />
             </View>
 
+            <View>
+              <Text style={styles.response}>{this.state.response}</Text>
+            </View>            
+
             <Button onPress={() =>this.createNote()}>
               <Text>Add Note</Text>
-            </Button>
-
+            </Button>         
           </View>
         </View>
       );
@@ -130,7 +146,7 @@ class AddNoteForm extends Component {
     tabBar: {
       label: 'Notes',
       icon: () => (
-        <Ionicons name='ios-home-outline' size={30} />
+        <Ionicons name='ios-clipboard-outline' size={30} />
       ),
     },
   }
@@ -177,7 +193,14 @@ const styles = {
     marginBottom: 60,
     fontSize: 16,
     textAlignVertical: 'top'
-  }
+  },
+  response: {
+    textAlign: "center",
+    fontSize: 35,
+    fontWeight: "bold",
+    paddingTop: 0,
+    padding: 50
+  }  
 }
 
 export default AddNoteForm;
