@@ -28,7 +28,6 @@ class AddNoteForm extends Component {
 
     this.createNote = this.createNote.bind(this);
     this.uploadNote = this.uploadNote.bind(this);
-    this.goToHome = this.goToHome.bind(this);
   }
 
   uploadNote(path) {
@@ -83,10 +82,7 @@ class AddNoteForm extends Component {
     console.log("here is the state!");
     console.log(this.state);
       return (
-        <View style={{ flex: 1 }}>
-          <View style={styles.viewStyle}>
-            <Text style={styles.textStyle}>Home</Text>
-          </View>      
+        <View style={{ flex: 1 }}>   
           <View style={ styles.addNotesContainer }>
             <StatusBar
               backgroundColor='#00796b'
@@ -135,11 +131,7 @@ class AddNoteForm extends Component {
   static navigationOptions = {
     header: (state) => ({
       visible: true,
-      title: (
-            <Text>
-                Notes
-            </Text>
-      )
+      title: 'Notes'
     }),
 
     // title: 'Tab1'

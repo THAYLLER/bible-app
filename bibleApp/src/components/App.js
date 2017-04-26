@@ -4,7 +4,7 @@ import { TabNavigator, StackNavigator } from 'react-navigation';
 // import HomeScreen from './HomeScreen';
 import HomeStack from './HomeStack';
 import StackReader from './StackReader';
-import AddNoteForm from './AddNoteForm';
+import NoteStack from './NoteStack';
 
 
 const App = TabNavigator({
@@ -15,7 +15,7 @@ const App = TabNavigator({
     screen: StackReader,
   },
   Tab3: {
-    screen: AddNoteForm,
+    screen: NoteStack,
   }  
 }, {
   tabBarOptions:   {
