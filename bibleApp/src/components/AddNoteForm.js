@@ -11,7 +11,7 @@ import {
   Button, 
   Text
 } from 'native-base';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as firebase from 'firebase';
 import VerseCard from  './VerseCard';
 
@@ -131,7 +131,7 @@ class AddNoteForm extends Component {
   static navigationOptions = {
     header: (state) => ({
       visible: true,
-      title: 'Notes'
+      title: 'New Note'
     }),
 
     // title: 'Tab1'
