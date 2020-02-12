@@ -13,12 +13,13 @@ class Devotional extends Migration
      */
     public function up()
     {
-        Schema::create('devotional', function (Blueprint $table) {
+        Schema::create('devotionais', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title_br');
             $table->string('title_es');
             $table->text('description_br');
             $table->text('description_es');
+            $table->string('day');
             $table->timestamps();
         });
     }
@@ -30,7 +31,7 @@ class Devotional extends Migration
      */
     public function down()
     {
-        Schema::table('devotional', function (Blueprint $table) {
+        Schema::table('devotionais', function (Blueprint $table) {
             //
         });
     }

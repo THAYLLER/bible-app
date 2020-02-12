@@ -41,26 +41,26 @@ Route::namespace('Bible')->name('Bible.')->group(function() {
         Route::delete('/{id}', 'BibleBooksTextsController@delete')->name('delete_booksText');
     });
 
-    Route::prefix('/devotional')->group(function() {
+    Route::prefix('/Mensagens')->group(function() {
 
-        Route::get('/', 'DevotionalController@index')->name('index_devotional');
-        Route::get('/{id}', 'DevotionalController@show')->name('single_devotional');
+        Route::get('/', 'DevotionaisController@index')->name('index_devotional');
+        Route::get('/{id}', 'DevotionaisController@show')->name('single_devotional');
 
-        Route::post('/', 'DevotionalController@store')->name('store_devotional');
-        Route::put('/{id}', 'DevotionalController@update')->name('update_devotional');
+        Route::post('/', 'DevotionaisController@store')->name('store_devotional');
+        Route::put('/{id}', 'DevotionaisController@update')->name('update_devotional');
 
-        Route::delete('/{id}', 'DevotionalController@delete')->name('delete_devotional');
+        Route::delete('/{id}', 'DevotionaisController@delete')->name('delete_devotional');
     });
 
-    Route::prefix('/glossary')->group(function() {
+    Route::prefix('/glossaries')->group(function() {
 
-        Route::get('/', 'GlossaryController@index')->name('index_glossary');
-        Route::get('/{id}', 'GlossaryController@show')->name('single_glossary');
+        Route::get('/', 'GlossariesController@index')->name('index_glossary');
+        Route::get('/{id}', 'GlossariesController@show')->name('single_glossary');
 
-        Route::post('/', 'GlossaryController@store')->name('store_glossary');
-        Route::put('/{id}', 'GlossaryController@update')->name('update_glossary');
+        Route::post('/', 'GlossariesController@store')->name('store_glossary');
+        Route::put('/{id}', 'GlossariesController@update')->name('update_glossary');
 
-        Route::delete('/{id}', 'GlossaryController@delete')->name('delete_glossary');
+        Route::delete('/{id}', 'GlossariesController@delete')->name('delete_glossary');
     });
 
     Route::prefix('/messages')->group(function() {

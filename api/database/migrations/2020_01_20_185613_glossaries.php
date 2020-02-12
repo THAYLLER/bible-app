@@ -13,7 +13,7 @@ class Glossary extends Migration
      */
     public function up()
     {
-        Schema::create('glossary', function (Blueprint $table) {
+        Schema::create('glossaries', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('words_br');
             $table->string('words_es');
@@ -30,7 +30,7 @@ class Glossary extends Migration
      */
     public function down()
     {
-        Schema::table('glossary', function (Blueprint $table) {
+        Schema::table('glossaries', function (Blueprint $table) {
             //
         });
     }

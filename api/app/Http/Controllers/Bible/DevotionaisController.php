@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers\Bible;
 
-use App\Glossary;
+use App\Devotionais;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class GlossaryController extends Controller
+class DevotionaisController extends Controller
 {
-    private $glossary;
+    private $devotionais;
 
-    public function __construct(Glossary $glossarys) {
+    public function __construct(Devotionais $devotionais) {
 
-        $this->glossary = $glossarys;
+        $this->cors();
+        $this->devotionais = $devotionais;
     }
 
     public function index(){
 
-        return response()->json($this->glossary::paginate(10));
+        return response()->json($this->devotionais::paginate(10));
     }
 
     public function show($id) {
 
-        $book = $this->glossary->find($id);
+        $devotionais = $this->devotionais->find($id);
 
-        if(!$book) return response()->json(['data' => ['msg'=> 'Glossário não encontrado!']], 404);
+        if(!$devotionais ) return response()->json(['data' => ['msg'=> 'Devocional não encontrado!']], 404);
 
         $data = ['data' => $book];
 
@@ -37,9 +38,9 @@ class GlossaryController extends Controller
 
             $data = $request->all();
 
-            $this->glossary->create($data);
+            $this->devotionais->create($data);
 
-            $msg_return = ['data' => ['Glossário criado com sucesso!']];
+            $msg_return = ['data' => ['Devocional criado com sucesso!']];
 
             return response()->json($msg_return, 201);
         } catch (\Throwable $th) {
@@ -59,11 +60,11 @@ class GlossaryController extends Controller
 
             $data = $request->all();
 
-            $book = $this->glossary->find($id);
+            $devotionais = $this->devotionais->find($id);
 
             $book->update($data);
 
-            $msg_return = ['data' => ['Glossário atualizado com sucesso!']];
+            $msg_return = ['data' => ['Devocional atualizado com sucesso!']];
 
             return response()->json($msg_return, 201);
         } catch (\Throwable $th) {
@@ -77,13 +78,13 @@ class GlossaryController extends Controller
         }
     }
 
-    public function delete(Glossary $id) {
+    public function delete(BibleBooks $id) {
 
         try {
 
             $id->delete();
 
-            $msg_return = ['data' => ['Glossário deletado com sucesso!']];
+            $msg_return = ['data' => ['Devocional deletado com sucesso!']];
 
             return response()->json($msg_return, 200);
 

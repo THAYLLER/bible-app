@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 
 class BibleBooksTextsController extends Controller
 {
+
     private $booksText;
 
     public function __construct(BibleBooksTexts $bibleBooksTexts) {
 
+        $this->cors();
+        
         $this->booksTexts = $bibleBooksTexts;
     }
 

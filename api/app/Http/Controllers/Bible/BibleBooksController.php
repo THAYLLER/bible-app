@@ -12,11 +12,11 @@ class BibleBooksController extends Controller
 
     public function __construct(BibleBooks $bibleBooks) {
 
+        $this->cors();
         $this->books = $bibleBooks;
     }
 
     public function index(){
-
         return response()->json($this->books::paginate(10));
     }
 

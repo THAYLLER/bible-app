@@ -2,29 +2,33 @@
 
 namespace App\Http\Controllers\Bible;
 
-use App\Devotional;
+use App\Glossaries;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class DevotionalController extends Controller
+class GlossariesController extends Controller
 {
-    private $devotional;
+    private $glossaries;
 
-    public function __construct(Devotional $devotional) {
+    public function __construct(Glossaries $glossaries) {
 
-        $this->devotional = $devotional;
+        $this->cors();
+
+        $this->glossaries = $glossaries;
     }
+
+
 
     public function index(){
 
-        return response()->json($this->devotional::paginate(10));
+        return response()->json($this->glossaries->all());
     }
 
     public function show($id) {
 
-        $devotional = $this->devotional->find($id);
+        $book = $this->glossaries->find($id);
 
-        if(!$devotional ) return response()->json(['data' => ['msg'=> 'Devocional não encontrado!']], 404);
+        if(!$book) return response()->json(['data' => ['msg'=> 'Glossário não encontrado!']], 404);
 
         $data = ['data' => $book];
 
@@ -37,9 +41,9 @@ class DevotionalController extends Controller
 
             $data = $request->all();
 
-            $this->devotional->create($data);
+            $this->glossaries->create($data);
 
-            $msg_return = ['data' => ['Devocional criado com sucesso!']];
+            $msg_return = ['data' => ['Glossário criado com sucesso!']];
 
             return response()->json($msg_return, 201);
         } catch (\Throwable $th) {
@@ -59,11 +63,11 @@ class DevotionalController extends Controller
 
             $data = $request->all();
 
-            $devotional = $this->devotional->find($id);
+            $book = $this->glossaries->find($id);
 
             $book->update($data);
 
-            $msg_return = ['data' => ['Devocional atualizado com sucesso!']];
+            $msg_return = ['data' => ['Glossário atualizado com sucesso!']];
 
             return response()->json($msg_return, 201);
         } catch (\Throwable $th) {
@@ -77,13 +81,13 @@ class DevotionalController extends Controller
         }
     }
 
-    public function delete(BibleBooks $id) {
+    public function delete(Glossary $id) {
 
         try {
 
             $id->delete();
 
-            $msg_return = ['data' => ['Devocional deletado com sucesso!']];
+            $msg_return = ['data' => ['Glossário deletado com sucesso!']];
 
             return response()->json($msg_return, 200);
 

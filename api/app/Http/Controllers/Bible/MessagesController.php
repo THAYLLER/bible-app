@@ -12,6 +12,8 @@ class MessagesController extends Controller
 
     public function __construct(Messages $messages) {
 
+        $this->cors();
+
         $this->messages = $messages;
     }
 
