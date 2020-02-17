@@ -14,13 +14,13 @@ class BibleBooksTextsController extends Controller
     public function __construct(BibleBooksTexts $bibleBooksTexts) {
 
         $this->cors();
-        
+
         $this->booksTexts = $bibleBooksTexts;
     }
 
     public function index(){
 
-        return response()->json($this->booksTexts::paginate(10));
+        return response()->json($this->booksTexts->all());
     }
 
     public function show($id) {
@@ -40,7 +40,7 @@ class BibleBooksTextsController extends Controller
 
             $data = $request->all();
 
-            $this->books->create($data);
+            $this->booksTexts->create($data);
 
             $msg_return = ['data' => ['Texto criado com sucesso!']];
 

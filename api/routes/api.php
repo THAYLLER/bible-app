@@ -30,7 +30,7 @@ Route::namespace('Bible')->name('Bible.')->group(function() {
         Route::delete('/{id}', 'BibleBooksController@delete')->name('delete_books');
     });
 
-    Route::prefix('/books/text')->group(function() {
+    Route::prefix('/texts')->group(function() {
 
         Route::get('/', 'BibleBooksTextsController@index')->name('index_booksText');
         Route::get('/{id}', 'BibleBooksTextsController@show')->name('single_booksText');
@@ -41,7 +41,7 @@ Route::namespace('Bible')->name('Bible.')->group(function() {
         Route::delete('/{id}', 'BibleBooksTextsController@delete')->name('delete_booksText');
     });
 
-    Route::prefix('/Mensagens')->group(function() {
+    Route::prefix('/devotionais')->group(function() {
 
         Route::get('/', 'DevotionaisController@index')->name('index_devotional');
         Route::get('/{id}', 'DevotionaisController@show')->name('single_devotional');

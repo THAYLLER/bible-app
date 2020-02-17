@@ -18,7 +18,7 @@ class DevotionaisController extends Controller
 
     public function index(){
 
-        return response()->json($this->devotionais::paginate(10));
+        return response()->json($this->devotionais->all());
     }
 
     public function show($id) {

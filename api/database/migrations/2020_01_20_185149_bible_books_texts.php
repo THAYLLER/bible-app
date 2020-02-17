@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class BibleBookTexts extends Migration
+class BibleBooksTexts extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class BibleBookTexts extends Migration
      */
     public function up()
     {
-        Schema::create('bible_book_texts', function (Blueprint $table) {
+        Schema::create('bible_books_texts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('bible_books_id');
-            $table->foreign('bible_books_id')->references('id')->on('bible_books')->onDelete('cascade');
+            $table->foreign('bible_books_id')->references('id')->on('bible_books');
             $table->integer('chapter');
             $table->integer('verse');
             $table->text('text_br');

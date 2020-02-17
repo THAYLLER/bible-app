@@ -8,6 +8,11 @@ class BibleBooks extends Model
 {
     protected $fillable = [
 
-        'name_br','name_es'
+        'name_br',
+        'name_es'
+    ];
+
+    protected $guarded = [
+        'id'
     ];
 }

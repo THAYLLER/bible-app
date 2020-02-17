@@ -17,7 +17,7 @@ class BibleBooksController extends Controller
     }
 
     public function index(){
-        return response()->json($this->books::paginate(10));
+        return response()->json($this->books->all());
     }
 
     public function show($id) {

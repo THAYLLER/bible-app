@@ -19,7 +19,7 @@ class MessagesController extends Controller
 
     public function index(){
 
-        return response()->json($this->messages::paginate(10));
+        return response()->json($this->messages->all());
     }
 
     public function show($id) {
